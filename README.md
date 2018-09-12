@@ -1,5 +1,5 @@
 # JNPC
-## 勉強会のための資料置き場
+### 勉強会のための資料置き場
 
 2018年9月の自主ゼミ用です。資料を準備中。まだ途中で、たびたび更新しています。  
 だいたい固まったら、お知らせします。  
@@ -60,7 +60,7 @@ https://rstudio.cloud
 #### ◆Googleスプレッドシート
 
 使えるかどうか、以下のリンクで確認を  
-sheets.google.com[sheets.google.com]
+[sheets.google.com](sheets.google.com)
 
 使えない場合のみ、こちらの手順で設定を  
 https://support.google.com/docs/answer/6000292
