@@ -42,14 +42,14 @@ https://qiita.com/daifuku_mochi2/items/ad0b398e6affd0688c97
 
 #### ◆統計処理用のプログラム言語「R」
 
-ダウンロード先はこちら。  
+ダウンロードはこちらから。  
 https://cran.r-project.org/
 
 Rのインストールが済んでから、次の「RStudio」に進んで下さい。  
 
 #### ◆Rを使いやすくする必須ソフト「RStsudio」
 
-ダウンロード先はこちら。公式ページの「Dowload」をクリックすると製品一覧が表示されます。「RStudio Desktop」とサーバー版があるので、「無料（FREE）」のデスクトップ版を選んで下さい。  
+ダウンロードはこちら。公式ページの「Dowload」をクリックすると製品一覧が表示されます。「RStudio Desktop」とサーバー版があるので、「無料（FREE）」のデスクトップ版を選んで下さい。  
 https://www.rstudio.com/products/rstudio/download/#download
 
 #### ◆R + RStsudioのクラウド版
@@ -66,4 +66,4 @@ https://rstudio.cloud
 https://support.google.com/docs/answer/6000292
 
 #### ◆Copytables
-ブラウザにChromeをお使いの方は、拡張機能の「Copytables」を追加すると、作業が楽になります。こちらは、可能であれば、程度です。  
+ブラウザにChromeをお使いの方は、拡張機能の「Copytables」を追加すると、作業が楽になります。可能であれば、程度ですので、無理にインストールしなくても構いません。  
