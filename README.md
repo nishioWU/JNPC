@@ -44,19 +44,23 @@ https://qiita.com/daifuku_mochi2/items/ad0b398e6affd0688c97
 
 ダウンロード先はこちら。  
 https://cran.r-project.org/
+
 Rのインストールが済んでから、次の「RStudio」に進んで下さい。  
 
 #### ◆Rを使いやすくする必須ソフト「RStsudio」
+
 ダウンロード先はこちら。公式ページの「Dowload」をクリックすると製品一覧が表示されます。「RStudio Desktop」とサーバー版があるので、「無料（FREE）」のデスクトップ版を選んで下さい。  
 https://www.rstudio.com/products/rstudio/download/#download
 
 #### ◆R + RStsudioのクラウド版
+
 インストールが制限されている方のみこちらを。誰でも使えますが、アカウントを作る必要があります。  
 https://rstudio.cloud
 
 #### ◆Googleスプレッドシート
+
 使えるかどうか、以下のリンクで確認を  
-sheets.google.com
+sheets.google.com[sheets.google.com]
 
 使えない場合のみ、こちらの手順で設定を  
 https://support.google.com/docs/answer/6000292
