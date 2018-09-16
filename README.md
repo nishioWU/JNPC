@@ -62,7 +62,7 @@ https://rstudio.cloud
 #### ◆Googleスプレッドシート
 
 使えるかどうか、以下のリンクで確認を  
-[sheets.google.com](sheets.google.com)
+[sheets.google.com](https://sheets.google.com)
 
 使えない場合のみ、こちらの手順で設定を  
 https://support.google.com/docs/answer/6000292
