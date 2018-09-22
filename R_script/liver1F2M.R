@@ -56,4 +56,4 @@ plt_F <- plot_ly(liver_F2, x = ~population, y = ~rate, mode = "markers", color =
 print(plt_F)
 
 htmlwidgets::saveWidget(config(plt_F, showLink = FALSE, collaborate = FALSE, displayModeBar = FALSE), "liver1F_0922.html")
-print(plt_F)
+
