@@ -46,7 +46,7 @@ electricity <- bind_rows(electricity11, electricity17, electricity18)
 electricity$DATE <- electricity$DATE %>% as.Date(tz = "Asia/Tokyo")
 # tail(electricity)
 # 迷うところだが、天候（とくに降水量）と消費電力量を突き合わせるにあたり、１時間ずらすかどうか。ここでは、ずらしていない
-electricity <- electricity %>% mutate(date_hour = as.POSIXct(paste(DATE, TIME))) #+ hms("01:00:00"))
+electricity <- electricity %>% mutate(date_hour = as.POSIXct(paste(DATE, TIME), tz = "Asia/Tokyo")) #+ hms("01:00:00"))
 # ７月と８月分だけに絞る
 electricity <- electricity %>% filter(month(date_hour) == 7 | month(date_hour) == 8)
 
