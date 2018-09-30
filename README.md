@@ -66,32 +66,32 @@
 ### インストール
 
 RとRStudioのインストールについては、川上さん、田中さんに作っていただいた昨年のPDFをご覧下さい。Windows用とMac用に分かれています。Windows用は10ページまで、今回はMeCabは不要です。
-また、こちらのサイトも参考になります
+また、こちらのサイトも参考になります。  
 https://qiita.com/daifuku_mochi2/items/ad0b398e6affd0688c97
 
 #### ◆統計処理用のプログラム言語「R」
 
-ダウンロードはこちらから。
+ダウンロードはこちらから。  
 https://cran.r-project.org/
 
 Rのインストールが済んでから、次の「RStudio」に進んで下さい。
 
 #### ◆Rを使いやすくする必須ソフト「RStsudio」
 
-ダウンロードはこちら。公式ページの「Dowload」をクリックすると製品一覧が表示されます。「RStudio Desktop」とサーバー版があるので、「無料（FREE）」のデスクトップ版を選んで下さい。
+ダウンロードはこちら。公式ページの「Dowload」をクリックすると製品一覧が表示されます。「RStudio Desktop」とサーバー版があるので、「無料（FREE）」のデスクトップ版を選んで下さい。  
 https://www.rstudio.com/products/rstudio/download/#download
 
 #### ◆R + RStsudioのクラウド版
 
-インストールが制限されている方のみこちらを。誰でも使えますが、アカウントを作る必要があります。
+インストールが制限されている方のみこちらを。誰でも使えますが、アカウントを作る必要があります。  
 https://rstudio.cloud
 
 #### ◆Googleスプレッドシート
 
-使えるかどうか、以下のリンクで確認を
+使えるかどうか、以下のリンクで確認を  
 [sheets.google.com](https://sheets.google.com)
 
-使えない場合のみ、こちらの手順で設定を
+使えない場合のみ、こちらの手順で設定を  
 https://support.google.com/docs/answer/6000292
 
 #### ◆Copytables
