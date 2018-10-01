@@ -121,7 +121,7 @@ View(lm_output)
 # 画像をファイルに保存
 
 # Windowsの場合はこれでもOK
-ggsave('../outcome/electricity_Win_revised', plt, width = 297, height = 210, units = 'mm')
+ggsave('../outcome/electricity_Win_revised.pdf', plt, width = 297, height = 210, units = 'mm')
 
 # Macでも文字化けしないようCairoを使う。A４判サイズをインチで指定
 # cairo_pdf("../outcome/electricity_Mac_revised.pdf", width = 11.69, height = 8.27, family = "Japan1GothicBBB")
