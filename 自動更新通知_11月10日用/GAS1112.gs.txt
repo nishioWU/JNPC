@@ -1,0 +1,190 @@
+//サイトの更新を検出するGAS
+//NOv10, 2018 にゼミ参加者に共有したものを、リファクタリング中。
+//JNPCの会見参加申し込みのサイトを定期巡回→これを、ほかのサイトでについても <ul>...</ul>の中身だけを比較して動くようにしたい
+
+//メインプログラム
+function autoMail(){
+/**
+初期設定
+「日本記者クラブの会見予定」をウォッチするなら、このまま触らずでＯＫ。それ以外のサイトの定期巡回に使うなら、★がついているものを適宜設定すること。
+★★は必ず設定、★はどちらでも。
+★★★★が変更箇所。
+メール発信先（ccやbccもカウントする）数は、無料版では１日100通に制限されている。なので、送り先（このスクリプトで設定）や頻度（トリガーで設定）はよく考えて。
+*/
+
+
+//★★サイト名
+  const targetName    = "日本記者クラブ「会見予定」";
+//URL
+//★★こちらがウォッチ先
+  const targetUrl      = "https://www.jnpc.or.jp/coming/conference/schedule";
+//★★メールに入れるリンクはこちらが便利（出席申し込みができるので）
+  const linkUrl        = "https://www.jnpc.or.jp/coming/conference_applicant";
+//★BCC＝自分以外のメール送信先はこちらに入れる。今は空っぽにしてある
+  var bccAddress     = "";
+//Googleにログインしている自分のアドレス。発信元とTO送信先に使う
+  const email          = Session.getActiveUser().getEmail();
+//TO送信先
+  const toAddress      = email;
+//発信元アドレス
+  const fromAddress    = email;
+//★★発信元名を適宜設定
+  const fromName       = "【自動通知のリファクタリング】新着通知";
+//★件名を作成
+  const mailSubject    = targetName + "に新着情報があります";
+//★★メールの冒頭部分
+  const mailHeader     = targetName + "が更新されました。\n予定一覧、参加申し込みはこちら。\n\n" + (linkUrl || targetUrl) + "\n";
+  var mailBody       = "";
+//★★差分検出には邪魔になる部分の指定。この場合は、会見予定だけを取り出している。クロスサイト攻撃対策など、表に見えない部分にも差分があるので、対象から外している
+//★★★★<ul>...</ul>の中身だけ、という抽出にしてみるため、いったん削る。リストそのものが複数あっても許容するようにしたい
+//  var exclude1       = new RegExp('<!DOCTYPE html>[\\s\\S]*<h1 class="heading-logo">会見予定<\/h1>', 'i');
+//  var exclude2       = new RegExp('<script>[\\s]*changePerSelector = function[\\s\\S]*<\/html>', 'i');
+
+
+/**
+サイトの更新をチェック
+★★★★事前準備として、<ul>...</ul>の中身を（複数リストがあっても）取り出している
+第一段階では、新着ではなくて、単に差分を見ている。差分があれば、まず、保存している「前回分」を上書き
+その上で、その差分が新着・更新なのか、古いものが消えたのかをチェックする第二段階に進む
+新規の配列要素（時間変更もこれで検出できる）があれば、自動通知メールを送る
+**/
+
+
+//スプレッドシートのTEMPシートに履歴を保存して、差分検出に使う
+//現在時刻を取得
+  var timeStamp     = new Date();
+//このブックの
+  var spreadSheet   = SpreadsheetApp.getActiveSpreadsheet();
+//今使っているシートの
+  var sheet         = spreadSheet.getActiveSheet();
+//A1とA2セルに
+  var cellTimeStampA= sheet.getRange("A1");
+  var cellContentA  = sheet.getRange("A2");
+//前回の内容が保存されているので、それを変数に入れる
+  var lastTimeStamp = cellTimeStampA.getValue();
+  var lastContent   = cellContentA.getValue();
+//差分検出に使うため、前回分を保存するセル
+  var cellTimeStampB= sheet.getRange("B1");
+  var cellContentB  = sheet.getRange("B2");
+
+
+//ウォッチするサイトのHTMLを取得
+  var response      = UrlFetchApp.fetch(targetUrl);
+//今回アクセスしたときのページの内容を変数に入れる。★★★★エンコード指定はなくても動くので、汎用化のため削った
+  var presentContent= response.getContentText();
+
+//★★以下は、日本記者クラブの会見予定に対応した部分。
+//★★★★HTMLのうち<ul>...</ul>を取り出すことにした
+//会見予定より前を削除
+//  presentContent    = presentContent.replace(exclude1, "******DELETED_1******\n");
+//後を削除
+//  presentContent    = presentContent.replace(exclude2, "\n******DELETED_2******");
+Logger.log(presentContent);
+presentContent = parseUls(presentContent);
+Logger.log(presentContent);
+
+//差分を比較。差分があれば、直近分を保存。履歴も１回分だけ残す
+  if(lastContent != presentContent){
+//もし、前回と今回が等しくなかったら
+//A列のセルに、更新された内容を貼り付けて保存しておく。次回の差分検出に使う
+    cellTimeStampA.setValue(timeStamp.toString());
+    cellContentA.setValue(presentContent);
+//B列のセルには、前回分を貼り付けて保存しておく。これは、人間が目で見て確認するためにしか使わない。あくまで、念のため
+    cellTimeStampB.setValue(lastTimeStamp);
+    cellContentB.setValue(lastContent);
+
+//差分があるのは分かったが、終了分が消えただけなのか、新着・更新があるのかをさらに調べる
+//１件ごとに切り分けて、会見日時・内容だけにしたものを作る
+    var presentArray = [];
+    presentArray = parseToArray(presentContent);
+    var lastArray = [];
+    lastArray = parseToArray(lastContent);
+//前回分にないものを検出する。引き続き、ifのブロックの中
+    var difference = compareArray(presentArray, lastArray);
+
+//新着・更新がある場合はメール通知する
+//前回なかったもの、を入れた配列変数が、空っぽでないとき
+    if(difference.length > 0){
+//★★新着・更新分をメールの後ろに貼り付けて、本文を作る。どれが新着か示す必要がなければ、＋以降は削る。行末のセミコロンは残す
+      mailBody = mailHeader + "---\n新着・更新は：\n\n" + difference.join('\n') + "\nです。\n";
+//メール送信の担当を呼び出す
+      mailToGroup(toAddress, mailSubject, mailBody, fromAddress, bccAddress, fromName)
+    }
+  }
+}
+//ここまでが、メインのプログラム
+
+
+//★★★★HTMLから「番号なしリスト」だけを取ってくる担当
+function parseUls(html){
+//HTMLを<ul>...</ul>単位で分解して配列に収容
+  var tempArray = [];
+//<ul>タグ内に記述があっても対象とするため、開くのみで絞る。閉じる>は条件に入れていない
+  tempArray = html.match(/<ul[\s\S]*?<\/ul>/g);
+//行頭の空白を除去。配列要素の置換をする「手下」を呼んでいる
+  tempArray = replaceElements(tempArray, /^[ \s]+/gm,"");
+  tempArray = tempArray.join('\n<--border of Unordered Lists-->\n');
+return tempArray
+}
+
+
+//★★HTMLをばらして配列変数に入れる担当
+function parseToArray(html){
+//HTMLを<li>１件ごとに分解して配列に収容。同じく、閉じる>は条件に入れていない
+  var tempArray = [];
+  tempArray = html.match(/<li[\s\S]*?<\/li>/g);
+//行頭の空白を除去。配列要素の置換をする「手下」を呼んでいる
+  tempArray = replaceElements(tempArray, /^[ \s]+/gm,"");
+
+//htmlタグを除去
+  tempArray = replaceElements(tempArray, /<[^>]*>/gm, "");
+
+//余分な改行を除去。会見日＋時間＋内容になる
+  tempArray = replaceElements(tempArray, /^[ \s]+/gm, "");
+
+//配列を返す
+  return tempArray
+}
+
+
+//配列の各要素を置換する担当(for(let elements of array)のループは使えないようだ)
+function replaceElements(tempArray, before, after){
+  for(var i = 0; i < tempArray.length; i++){
+    tempArray[i] = tempArray[i].replace(before, after)
+  }
+  return tempArray
+}
+
+
+//配列の差分検出を担当。新にあって旧にないもののみチェック。逆はスルーするのがミソ
+//knclude.はGASでは使えなかった
+function compareArray(newArray, oldArray){
+  var difference = [];
+  for(var i = 0; i < newArray.length; i++){
+    if(oldArray.indexOf(newArray[i]) === -1){
+      difference.push(newArray[i])
+    }
+  }
+  return difference
+}
+
+
+//メール送信の担当
+function mailToGroup(toAddress, mailSubject, mailBody, fromAddress,
+bccAddress, fromName){
+  MailApp.sendEmail(
+    toAddress,
+    mailSubject,
+    mailBody,
+    {
+    from: fromAddress,
+    bcc: bccAddress,
+    name: fromName
+    }
+  )
+}
+
+/*
+正規表現の動作は、以下で確かめながら作った。ここは使い出がある（NICARで教わったサイト）
+https://regex101.com/
+*/
