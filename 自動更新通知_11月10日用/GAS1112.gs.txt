@@ -36,9 +36,9 @@ function autoMail(){
   const mailHeader     = targetName + "が更新されました。\n予定一覧、参加申し込みはこちら。\n\n" + (linkUrl || targetUrl) + "\n";
   var mailBody       = "";
 //★★差分検出には邪魔になる部分の指定。この場合は、会見予定だけを取り出している。クロスサイト攻撃対策など、表に見えない部分にも差分があるので、対象から外している
-//★★★★<ul>...</ul>の中身だけ、という抽出にしてみるため、いったん削る。リストそのものが複数あっても許容するようにしたい
-//  var exclude1       = new RegExp('<!DOCTYPE html>[\\s\\S]*<h1 class="heading-logo">会見予定<\/h1>', 'i');
-//  var exclude2       = new RegExp('<script>[\\s]*changePerSelector = function[\\s\\S]*<\/html>', 'i');
+★★このサイトの場合は、会見予定のメイン部分だけにしないとダメ。「これからの会見」は比較対象含めないようにする
+  var exclude1       = new RegExp('<!DOCTYPE html>[\\s\\S]*<h1 class="heading-logo">会見予定<\/h1>', 'i');
+  var exclude2       = new RegExp('<script>[\\s]*changePerSelector = function[\\s\\S]*<\/html>', 'i');
 
 
 /**
@@ -76,12 +76,9 @@ function autoMail(){
 //★★以下は、日本記者クラブの会見予定に対応した部分。
 //★★★★HTMLのうち<ul>...</ul>を取り出すことにした
 //会見予定より前を削除
-//  presentContent    = presentContent.replace(exclude1, "******DELETED_1******\n");
+  presentContent    = presentContent.replace(exclude1, "******DELETED_1******\n");
 //後を削除
-//  presentContent    = presentContent.replace(exclude2, "\n******DELETED_2******");
-Logger.log(presentContent);
-presentContent = parseUls(presentContent);
-Logger.log(presentContent);
+  presentContent    = presentContent.replace(exclude2, "\n******DELETED_2******");
 
 //差分を比較。差分があれば、直近分を保存。履歴も１回分だけ残す
   if(lastContent != presentContent){
